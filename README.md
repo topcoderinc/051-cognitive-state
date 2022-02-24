@@ -1,4 +1,4 @@
-# NASA Conitive State Determination :thought_balloon:
+# NASA Cognitive State Determination :thought_balloon:
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
