@@ -33,11 +33,11 @@ We have to predict cognitive start for time `t` and `t+3`. The target for `t` is
 
 I had several ideas on features generation, and I combined them into the following groups. 
 
-1 - Raw sensor data. Provide data “as is.”
-2 - Rolling statistics with different time windows (5, 999999 seconds) for both separate sessions and “global” (i.e. no separate sessions). Rolling statistincs include: mean, std, z-score: [x - mean(x)] / std(x)
-3 - Shift features, i.e. the value of sensor data a second ago, two secodns ago, etc.
-4 - Features based on the interactions between sensor data, e.g., the value of Zephyr_HR divided by the value of Zephyr_HRV. 
-5 - Features based on the distances between eyes positions and gazing points. 
+1. Raw sensor data. Provide data “as is.”
+2. Rolling statistics with different time windows (5, 999999 seconds) for both separate sessions and “global” (i.e. no separate sessions). Rolling statistincs include: mean, std, z-score: [x - mean(x)] / std(x)
+3. Shift features, i.e. the value of sensor data a second ago, two secodns ago, etc.
+4. Features based on the interactions between sensor data, e.g., the value of Zephyr_HR divided by the value of Zephyr_HRV. 
+5. Features based on the distances between eyes positions and gazing points. 
 
 
 ## Validation 
