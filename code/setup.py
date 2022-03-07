@@ -12,6 +12,8 @@ setup(
     name="topcoder_cognitive_state",
     version="0.0.1",
     packages=find_packages(),
-    py_modules=[splitext(basename(path))[0] for path in glob("topcoder_cognitive_state/*.py")],
+    py_modules=[
+        splitext(basename(path))[0] for path in glob("topcoder_cognitive_state/*.py")
+    ],
     install_requires=requirements,
 )
