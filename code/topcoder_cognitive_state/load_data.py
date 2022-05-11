@@ -1,13 +1,14 @@
+"""
+This module: loading data
+"""
 from typing import Tuple
 import time
-
+from constants import METADATA_COLUMNS, NAN_VALUES, DATA_COLS
 import pandas as pd
 from tqdm import tqdm
 
-from topcoder_cognitive_state.CONSTANTS import METADATA_COLUMNS, NAN_VALUES
 
-
-def _test_missing_features(df: pd.DataFrame) -> pd.DataFrame:
+def _test_missing_features(data: pd.DataFrame) -> pd.DataFrame:
     """
     This test contains three tests which are run manually:
 
@@ -15,65 +16,7 @@ def _test_missing_features(df: pd.DataFrame) -> pd.DataFrame:
         2. Check if some columns have None values
         3. Check if some columns have -9999.9 (missing) values
     """
-    # cols = ['ViveEye_gazeOrigin_L_X', 'ViveEye_gazeOrigin_L_Y', 'ViveEye_gazeOrigin_L_Z']
-    # cols = ['Myo_EMG_0', 'Myo_EMG_1', 'Myo_EMG_2', 'Myo_EMG_3', 'Myo_EMG_4', 'Myo_EMG_5', 'Myo_EMG_6']
-    # cols = ['Polar_bpm', 'Polar_hrv', 'tlx_score']
-    cols = [
-        # features
-        "tlx_score",
-        "E4_BVP",
-        "E4_GSR",
-        "LooxidLink_EEG_A3",
-        "LooxidLink_EEG_A4",
-        "LooxidLink_EEG_FP1",
-        "LooxidLink_EEG_FP2",
-        "LooxidLink_EEG_A7",
-        "LooxidLink_EEG_A8",
-        "Muse_EEG_TP9",
-        "Muse_EEG_AF7",
-        "Muse_EEG_AF8",
-        "Muse_EEG_TP10",
-        "Muse_PPG_0",
-        "Muse_PPG_1",
-        "Muse_PPG_2",
-        "Myo_GYR_X",
-        "Myo_GYR_Y",
-        "Myo_GYR_Z",
-        "Myo_EMG_0",
-        "Myo_EMG_1",
-        "Myo_EMG_2",
-        "Myo_EMG_3",
-        "Myo_EMG_4",
-        "Myo_EMG_5",
-        "Myo_EMG_6",
-        "Myo_EMG_7",
-        "PICARD_fnirs_0",
-        "PICARD_fnirs_1",
-        "Polar_bpm",
-        "Polar_hrv",
-        "ViveEye_pupilPos_L_X",
-        "ViveEye_pupilPos_L_Y",
-        "ViveEye_pupilPos_R_X",
-        "ViveEye_pupilPos_R_Y",
-        "ViveEye_gazeOrigin_L_X",
-        "ViveEye_gazeOrigin_L_Y",
-        "ViveEye_gazeOrigin_L_Z",
-        "ViveEye_gazeOrigin_R_X",
-        "ViveEye_gazeOrigin_R_Y",
-        "ViveEye_gazeOrigin_R_Z",
-        "ViveEye_gazeDirection_L_X",
-        "ViveEye_gazeDirection_L_Y",
-        "ViveEye_gazeDirection_L_Z",
-        "ViveEye_gazeDirection_R_X",
-        "ViveEye_gazeDirection_R_Y",
-        "ViveEye_gazeDirection_R_Z",
-        "ViveEye_eyeOpenness_L",
-        "ViveEye_pupilDiameter_L",
-        "ViveEye_eyeOpenness_R",
-        "ViveEye_pupilDiameter_R",
-        "Zephyr_HR",
-        "Zephyr_HRV",
-    ]
+    cols = DATA_COLS
 
     # case 1 - no column
     # df = df.drop(cols, axis=1)
@@ -84,11 +27,11 @@ def _test_missing_features(df: pd.DataFrame) -> pd.DataFrame:
 
     # case 3 - missing values
     for col in cols:
-        df[col] = -9999.9
-    return df
+        data[col] = -9999.9
+    return data
 
 
-def read_and_prepare_data_chunk(df: pd.DataFrame) -> pd.DataFrame:
+def read_and_prepare_data_chunk(data: pd.DataFrame) -> pd.DataFrame:
     """
     Read raw data and prepare it for processing.
     I.e., create columns if they are missing,
@@ -96,67 +39,12 @@ def read_and_prepare_data_chunk(df: pd.DataFrame) -> pd.DataFrame:
     etc.
 
     Args:
-        df (pd.DataFrame): input raw data
+        data (pd.DataFrame): input raw data
 
     Returns:
         pd.DataFrame: processed data
     """
-    EXPECTED_COLUMNS = [
-        # features
-        "tlx_score",
-        "E4_BVP",
-        "E4_GSR",
-        "LooxidLink_EEG_A3",
-        "LooxidLink_EEG_A4",
-        "LooxidLink_EEG_FP1",
-        "LooxidLink_EEG_FP2",
-        "LooxidLink_EEG_A7",
-        "LooxidLink_EEG_A8",
-        "Muse_EEG_TP9",
-        "Muse_EEG_AF7",
-        "Muse_EEG_AF8",
-        "Muse_EEG_TP10",
-        "Muse_PPG_0",
-        "Muse_PPG_1",
-        "Muse_PPG_2",
-        "Myo_GYR_X",
-        "Myo_GYR_Y",
-        "Myo_GYR_Z",
-        "Myo_EMG_0",
-        "Myo_EMG_1",
-        "Myo_EMG_2",
-        "Myo_EMG_3",
-        "Myo_EMG_4",
-        "Myo_EMG_5",
-        "Myo_EMG_6",
-        "Myo_EMG_7",
-        "PICARD_fnirs_0",
-        "PICARD_fnirs_1",
-        "Polar_bpm",
-        "Polar_hrv",
-        "ViveEye_pupilPos_L_X",
-        "ViveEye_pupilPos_L_Y",
-        "ViveEye_pupilPos_R_X",
-        "ViveEye_pupilPos_R_Y",
-        "ViveEye_gazeOrigin_L_X",
-        "ViveEye_gazeOrigin_L_Y",
-        "ViveEye_gazeOrigin_L_Z",
-        "ViveEye_gazeOrigin_R_X",
-        "ViveEye_gazeOrigin_R_Y",
-        "ViveEye_gazeOrigin_R_Z",
-        "ViveEye_gazeDirection_L_X",
-        "ViveEye_gazeDirection_L_Y",
-        "ViveEye_gazeDirection_L_Z",
-        "ViveEye_gazeDirection_R_X",
-        "ViveEye_gazeDirection_R_Y",
-        "ViveEye_gazeDirection_R_Z",
-        "ViveEye_eyeOpenness_L",
-        "ViveEye_pupilDiameter_L",
-        "ViveEye_eyeOpenness_R",
-        "ViveEye_pupilDiameter_R",
-        "Zephyr_HR",
-        "Zephyr_HRV",
-        # target
+    expected_columns = DATA_COLS + [
         "induced_state",
     ]
 
@@ -164,49 +52,49 @@ def read_and_prepare_data_chunk(df: pd.DataFrame) -> pd.DataFrame:
     # df = _test_missing_features(df)
 
     # test_suite
-    if "test_suite" not in df.columns:
-        df["test_suite"] = "test"
+    if "test_suite" not in data.columns:
+        data["test_suite"] = "test"
 
-    df["time"] = pd.to_datetime(df["time"], unit="us")
-    df["timestamp"] = df["time"].dt.round("1s")
-    df = df.drop("time", axis=1)
+    data["time"] = pd.to_datetime(data["time"], unit="us")
+    data["timestamp"] = data["time"].dt.round("1s")
+    data = data.drop("time", axis=1)
 
-    ags = df.groupby(METADATA_COLUMNS + ["timestamp"]).first()
+    ags = data.groupby(METADATA_COLUMNS + ["timestamp"]).first()
 
-    fillna_constant = 0
+    fillna_constant = -999
 
     # replace missing features with zero
-    missing_features = [col for col in EXPECTED_COLUMNS if col not in ags.columns]
+    missing_features = [col for col in expected_columns if col not in ags.columns]
     for col in missing_features:
         ags[col] = fillna_constant
 
-    # fill none values with 0
+    # fill none values with -999
     ags = ags.fillna(fillna_constant)
 
-    # fill -999 values with 0
-    for v in NAN_VALUES:
-        ags = ags.replace(v, fillna_constant)
+    # fill -999 values with -999
+    for value in NAN_VALUES:
+        ags = ags.replace(value, fillna_constant)
 
     # keep columns in the same order
-    ags = ags[EXPECTED_COLUMNS]
+    ags = ags[expected_columns]
     return ags
 
 
-def get_dummy_template(df: pd.DataFrame) -> pd.DataFrame:
+def get_dummy_template(data: pd.DataFrame) -> pd.DataFrame:
     """
     The template is needed to match the expected sample submission format.
     """
-    df["time"] = pd.to_datetime(df["time"], unit="us")
-    df["timestamp"] = df["time"].dt.round("1s")
-    df = df.drop("time", axis=1)
-    dummy_template = df.drop_duplicates(
+    data["time"] = pd.to_datetime(data["time"], unit="us")
+    data["timestamp"] = data["time"].dt.round("1s")
+    data = data.drop("time", axis=1)
+    dummy_template = data.drop_duplicates(
         subset=METADATA_COLUMNS + ["timestamp"], keep="first"
     ).reset_index(drop=True)
     dummy_template = dummy_template[METADATA_COLUMNS + ["timestamp"]]
     return dummy_template
 
 
-def get_needed_data(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def get_needed_data(data: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Read data for training/testing and prepare template format for submission
 
@@ -214,8 +102,8 @@ def get_needed_data(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         res1 - pd.DataFrame - read data
         res2 - pd.DataFrame - template for submission
     """
-    res1 = read_and_prepare_data_chunk(df)
-    res2 = get_dummy_template(df)
+    res1 = read_and_prepare_data_chunk(data)
+    res2 = get_dummy_template(data)
     return res1, res2
 
 

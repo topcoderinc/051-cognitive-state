@@ -1,15 +1,17 @@
+"""
+This module:  predict input data.
+"""
+
 from typing import List
 import sys
 import warnings
 import time
 import pickle
-
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-
-from topcoder_cognitive_state.load_data import read_data
-from topcoder_cognitive_state.model import Model
+from load_data import read_data
+from model import Model
 
 warnings.filterwarnings("ignore")
 
@@ -19,19 +21,19 @@ def arrays_to_str_list(arr: np.array) -> List[str]:
     Transform predictions arrays into a list of strings to match the submission format.
     """
     result = []
-    for i in range(arr.shape[0]):
-        tmp = list(arr[i, :])
-        tmp = "[" + " ".join([str(s) for s in tmp]) + "]"
+    for index in range(arr.shape[0]):
+        tmp = list(arr[index, :])
+        tmp = "[" + " ".join([str(_tmp) for _tmp in tmp]) + "]"
         result.append(str(tmp))
     return result
 
 
-def lists_to_str_list(arr: List[List[str]]) -> List[str]:
+def lists_to_str_list(array: List[List[str]]) -> List[str]:
     """
     Transform most important features arrays into a list of strings to match submission format.
     """
     result = []
-    for tmp in arr:
+    for tmp in array:
         tmp = "[" + " ".join(["'" + str(s) + "'" for s in tmp]) + "]"
         result.append(str(tmp))
     return result
@@ -103,11 +105,11 @@ def make_predictions(
     t_start = time.time()
 
     # get unique
-    tmp = [i[0] for i in data.index]
+    temp = [index[0] for index in data.index]
     test_suites = []
-    for t in tmp:
-        if t not in test_suites:
-            test_suites.append(t)
+    for _temp in temp:
+        if _temp not in test_suites:
+            test_suites.append(_temp)
 
     # make predictions
     result = []
@@ -131,6 +133,11 @@ def make_predictions(
 
 
 def main():
+    """
+        main entry
+    Returns:
+
+    """
     if len(sys.argv) < 2 or len(sys.argv[1]) == 0:
         print("Testing input file is missing.")
         return 1
@@ -145,8 +152,8 @@ def main():
     output_file = sys.argv[2]
     model_file = sys.argv[3]
 
-    with open(model_file, "rb") as f:
-        model = pickle.load(f)
+    with open(model_file, "rb") as file:
+        model = pickle.load(file)
 
     # load data
     data, dummies = read_data(input_file)
