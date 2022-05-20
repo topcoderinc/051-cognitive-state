@@ -1,4 +1,4 @@
-# Whitepaper
+# Cognitive State Determination Whitepaper 
 ## Overview
 This codebase is a winner of the Topcoder NASA Cognitive State Determination marathon match. As part of the final submission the competitor was asked to compelte this document. Personal details have been removed. 
 
